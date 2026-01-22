@@ -13,22 +13,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Xcode 16
-        run: sudo xcode-select -s /Applications/Xcode_16.app
+      - name: Select Xcode
+        # Usamos Xcode.app que suele ser la versión estable más reciente
+        run: sudo xcode-select -s /Applications/Xcode.app
 
       - name: Prepare iOS Simulator
         run: |
-          # Listamos los runtimes para debuguear en el log
-          xcrun simctl list runtimes
-          # Intentamos crear un simulador iPhone 15 con el runtime disponible (iOS 17.5 o 18.0)
-          # Usamos un comando que no falle si ya existe
-          DEVICE_ID=$(xcrun simctl create "TestDevice" "com.apple.CoreSimulator.SimDeviceType.iPhone-15" "com.apple.CoreSimulator.SimRuntime.iOS-17-5" || xcrun simctl create "TestDevice" "com.apple.CoreSimulator.SimDeviceType.iPhone-15" "com.apple.CoreSimulator.SimRuntime.iOS-18-0")
+          # Creamos el dispositivo usando el runtime que confirmamos que existe: iOS 26.2
+          DEVICE_ID=$(xcrun simctl create "TestDevice" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "com.apple.CoreSimulator.SimRuntime.iOS-26-2")
           xcrun simctl boot $DEVICE_ID
+          echo "DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
 
       - name: Build & Test
         run: |
           xcodebuild \
             -scheme "SavingsCalculatorTutorial" \
-            -destination "platform=iOS Simulator,name=TestDevice" \
+            -destination "id=${{ env.DEVICE_ID }}" \
             -enableCodeCoverage YES \
-            test         
+            test        
