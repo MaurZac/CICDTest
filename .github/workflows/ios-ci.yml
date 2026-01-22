@@ -8,19 +8,20 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: macos-14 # Usar macOS 14 garantiza Xcode 15+ 
+    # Cambiamos a macos-15 para tener las herramientas de 2025/2026
+    runs-on: macos-15
 
     steps:
       - uses: actions/checkout@v4
 
-      # Este paso selecciona automáticamente la versión de Xcode instalada por defecto
-      - name: Set Xcode Version
-        run: sudo xcode-select -s /Applications/Xcode.app
+      - name: Select Xcode
+        # Usamos la versión 16 que soporta el nuevo formato de proyecto
+        run: sudo xcode-select -s /Applications/Xcode_16.app
       
       - name: Build & Test
         run: |
           xcodebuild \
             -scheme "SavingsCalculatorTutorial" \
-            -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -enableCodeCoverage YES \
             test
