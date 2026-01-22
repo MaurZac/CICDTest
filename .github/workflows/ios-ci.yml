@@ -1,24 +1,25 @@
 name: iOS CI
 
 on:
- push:
-  branches: [ main, develop ]
-pull_request:
-  branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
 jobs:
   build-and-test:
-    runs-on: macos-lastest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_26.2.app
+        run: sudo xcode-select -switch /Applications/Xcode_15.4.app
       
       - name: Build & Test with Coverage
         run: |
           xcodebuild \
             -scheme "SavingsCalculatorTutorial" \
-            -destionation 'platform=iOS Simulator,name=iPhone 16' \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
             -enableCodeCoverage YES \
             clean test | xcpretty
